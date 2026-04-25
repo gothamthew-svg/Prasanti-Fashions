@@ -1,0 +1,90 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  # ── Quality checks ─────────────────────────────────────────────────────────
+  quality:
+    name: Lint & Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Type check
+        run: npm run type-check
+
+  # ── Build check ────────────────────────────────────────────────────────────
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: quality
+    env:
+      # Provide dummy values so the build doesn't fail on missing env vars
+      NEXT_PUBLIC_SITE_URL:               https://prafashions.com
+      NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: pk_test_placeholder
+      STRIPE_SECRET_KEY:                  sk_test_placeholder
+      GOOGLE_SHEET_ID:                    placeholder
+      GOOGLE_SHEETS_API_KEY:              placeholder
+      NEXT_PUBLIC_SENTRY_DSN:             https://placeholder@o0.ingest.sentry.io/0
+      SENTRY_ORG:                         placeholder
+      SENTRY_PROJECT:                     placeholder
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nextjs-build
+          path: .next/
+          retention-days: 1
+
+  # ── Deployment notice ──────────────────────────────────────────────────────
+  # Vercel auto-deploys from GitHub — this job just adds a status comment.
+  # To enable: add VERCEL_TOKEN secret in GitHub repo settings.
+  deploy-preview:
+    name: Preview Deploy
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Comment PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '🚀 **Preview deploy triggered on Vercel.** Check the Vercel bot comment for the preview URL.'
+            })

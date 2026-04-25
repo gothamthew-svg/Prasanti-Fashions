@@ -1,0 +1,56 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --gold:    #d4a017;
+  --gold-lt: #f5e090;
+  --text:    #1a0a00;
+}
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--font-lato), system-ui, sans-serif; color: #1a0a00; background: #fff; }
+  h1,h2,h3,h4 { font-family: var(--font-playfair), Georgia, serif; }
+}
+
+@layer components {
+  /* Primary CTA — gold fill */
+  .btn-primary {
+    @apply inline-flex items-center justify-center bg-gold-400 hover:bg-gold-500
+           text-white font-sans font-bold tracking-widest text-xs uppercase
+           px-8 py-3 transition-all duration-200
+           focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold-400;
+  }
+  /* Secondary CTA — outlined */
+  .btn-outline {
+    @apply inline-flex items-center justify-center border border-gold-400 text-gold-500
+           hover:bg-gold-400 hover:text-white font-sans font-bold tracking-widest
+           text-xs uppercase px-8 py-3 transition-all duration-200;
+  }
+  /* Ghost — dark outlined */
+  .btn-dark {
+    @apply inline-flex items-center justify-center border border-gray-800 text-gray-800
+           hover:bg-gray-800 hover:text-white font-sans font-bold tracking-widest
+           text-xs uppercase px-8 py-3 transition-all duration-200;
+  }
+  /* Section heading */
+  .section-title {
+    @apply font-serif text-3xl md:text-4xl text-gray-900;
+  }
+  .section-divider {
+    @apply w-12 h-px bg-gold-400 mx-auto my-4;
+  }
+  /* Input fields */
+  .form-input {
+    @apply w-full border border-gray-200 bg-white px-4 py-3 font-sans text-sm
+           text-gray-900 placeholder-gray-400
+           focus:outline-none focus:ring-2 focus:ring-gold-400 focus:border-transparent
+           transition-all duration-200;
+  }
+  .form-error { @apply text-red-500 text-xs mt-1 font-sans; }
+
+  /* Star rating */
+  .star-filled { @apply text-gold-400; }
+  .star-empty  { @apply text-gray-200; }
+}

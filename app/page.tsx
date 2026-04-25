@@ -1,3 +1,4 @@
+import NewsletterForm from '@/components/NewsletterForm';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -164,10 +165,7 @@ export default async function HomePage() {
         <div className="max-w-lg mx-auto px-4 text-center">
           <h2 className="font-serif text-2xl text-gray-900 mb-2">Stay in the Loop</h2>
           <p className="font-sans text-sm text-gray-500 mb-6">New collections, exclusive offers, and styling inspiration — straight to your inbox.</p>
-          <form className="flex flex-col sm:flex-row gap-3" onSubmit={e => e.preventDefault()}>
-            <input type="email" placeholder="Enter your email" className="form-input flex-1" />
-            <button type="submit" className="btn-primary flex-shrink-0">Subscribe</button>
-          </form>
+	  <NewsletterForm />
           <p className="font-sans text-xs text-gray-400 mt-3">No spam. Unsubscribe anytime.</p>
         </div>
       </section>
